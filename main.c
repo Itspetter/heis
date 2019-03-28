@@ -29,6 +29,15 @@ int main() {
         printf("Unable to initialize elevator hardware!\n");
         return 1;
     }
+
+
+    typedef enum state_id { //hvorfor forskjellig navn på enum og identifier
+        idle = 0, //I ro uten bestillinger
+        in_floor, //I ro, åpne dør, sjekke bestilling
+        moving, //Beveger seg mot prioritert bestilling
+        emergency_stop
+    } state;
+
     
     state current_state = idle;
     
