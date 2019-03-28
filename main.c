@@ -36,10 +36,6 @@ int main() {
         return 1;
     }
 
-    printf("Press STOP button to stop elevator and exit program.\n");
-
-    
-
     typedef enum state_id { //hvorfor forskjellig navn på enum og identifier
         idle = 0, //I ro uten bestillinger
         in_floor, //I ro, åpne dør, sjekke bestilling

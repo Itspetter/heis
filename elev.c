@@ -8,9 +8,10 @@
 #include "elev.h"
 #include "io.h"
 
+
 #include <assert.h>
 #include <stdlib.h>
-
+#include <time.h>
 
 static const int lamp_channel_matrix[N_FLOORS][N_BUTTONS] = {
     {LIGHT_UP1, LIGHT_DOWN1, LIGHT_COMMAND1},
@@ -48,7 +49,23 @@ int elev_init(void) {
     // Clear stop lamp, door open lamp, and set floor indicator to ground floor.
     elev_set_stop_lamp(0);
     elev_set_door_open_lamp(0);
-    elev_set_floor_indicator(0);
+    
+	int floor = elev_get_floor_sensor_signal(void);
+
+	if (floor == -1) {
+
+		elev_set_motor_direction(DIRN_UP);
+		while (floor == -1) {
+			floor = elev_get_floor_sensor_signal(void);
+		}
+		elev_set_motor_direction(DIRN_STOP);
+		elev_set_floor_indicator(floor);
+		
+		return 1;
+	}
+
+	elev_set_floor_indicator(floor);
+	
 
     // Return success.
     return 1;
