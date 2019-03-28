@@ -50,13 +50,13 @@ int elev_init(void) {
     elev_set_stop_lamp(0);
     elev_set_door_open_lamp(0);
     
-	int floor = elev_get_floor_sensor_signal(void);
+	int floor = elev_get_floor_sensor_signal();
 
 	if (floor == -1) {
 
 		elev_set_motor_direction(DIRN_UP);
 		while (floor == -1) {
-			floor = elev_get_floor_sensor_signal(void);
+			floor = elev_get_floor_sensor_signal();
 		}
 		elev_set_motor_direction(DIRN_STOP);
 		elev_set_floor_indicator(floor);

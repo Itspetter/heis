@@ -8,15 +8,18 @@
 
 #include <stdio.h>
 #include "fsm.h"
+#include "timer.h"
 
-void emergency_handler(int orders[]) {
+
+
+void fsm_emergency_handler() {
     //STOPPLAMPE OG MOTOR
     elev_set_stop_lamp(1);
     elev_set_motor_direction(DIRN_STOP);
     
     //SLETTE ALLE BESTILLINGER
     for(int i = 0; i < N_FLOORS; i++) {
-        order_erase_order(i, orders);
+        order_erase_order(i);
     }
     
     //Åpner døren hvis i etasje
@@ -29,33 +32,38 @@ void emergency_handler(int orders[]) {
     
     //Sjekker på om i etasje - holder døren åpen i ytterligere 3 sek
     if(elev_get_floor_sensor_signal()) {
-        fsm_open_door(orders);
+        fsm_open_door();
     }
 }
 
-void fsm_check_buttons_place_order(int orders[]) {
+void fsm_check_buttons_place_order() {
     for(int i = 0; i < 3; i++) {
         for(int j = 0; j < 4; j++){
-            if(elev_get_button_signal(i, j)) {
-                order_place_order(i, j, orders);
+            if(!((i == 0 && j == 3) || (i == 1 && j == 0))) {
+                if(elev_get_button_signal(i, j)) {
+                    order_place_order(i, j);
+                }
             }
         }
     }
 }
 
-void fsm_open_door(int orders[]) {
-    time_t start_time = time(NULL);
-    time_t seconds = 0;
+void fsm_open_door() {
+    timer_start();
     elev_set_door_open_lamp(1);
-    while(seconds - start_time < 3) {
-        //Sjekk på stoppknapp for hver iterasjon
-        //?TA HØYDE FOR REKURSJON? SE PÅ DETTE
-        if(elev_get_stop_signal()) {
-            fsm_emergency_handler(orders);
-        }
-        //Legg inn bestilling hvis en eller flere knapper trykkes
-        fsm_check_buttons_place_order(orders);
-        seconds = time(NULL);
-    }
+}
+
+
+void fsm_timeout() {
     elev_set_door_open_lamp(0);
+    timer_stop(); 
+}
+
+int fsm_is_order_in_same_floor() {
+    if(order_same_floor_order(elev_get_floor_sensor_signal())){
+        return 1;
+    }
+    else {
+        return 0;
+        }
 }
