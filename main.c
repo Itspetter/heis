@@ -10,6 +10,10 @@
  *
  */
 
+void hanna_tester_paa_nytt() {
+    printf("heipaanytt");
+}
+
 void emergency_handler(int order[]) {
     //STOPPLAMPE OG MOTOR
     elev_set_stop_lamp(1);
