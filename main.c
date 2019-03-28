@@ -12,6 +12,8 @@
 
 void hanna_tester_paa_nytt() {
     printf("heipaanytt");
+void hanna_tester() {
+    printf("heihei");
 }
 
 void emergency_handler(int order[]) {
