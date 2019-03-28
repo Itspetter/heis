@@ -1,6 +1,8 @@
 #include "elev.h"
 #include "order.h"
+#include "fsm.h"
 #include <stdio.h>
+
 
 /*FUNKSJONER VI VIL HA
  *order_check_for_order();
@@ -10,23 +12,16 @@
  *
  */
 
-
-void emergency_handler(int order[]) {
-    //STOPPLAMPE OG MOTOR
-    elev_set_stop_lamp(1);
-    elev_set_motor_direction(DIRN_STOP);
-    
-    //SLETTE ALLE BESTILLINGER
-    for(int i = 0; i < N_FLOORS; i++) {
-        order_erase_order(i, order);
-    }
-    
-    //LOOPER TIL KNAPP IKKE LENGER ER TRYKKET
-    while(elev_get_stop_signal());
-    elev_set_stop_lamp(0);
-}
+int orders[N_FLOORS*N_BUTTONS];
 
 
+
+typedef enum state_id { //hvorfor forskjellig navn på enum og identifier
+    idle = 0, //I ro uten bestillinger
+    in_floor, //I ro, åpne dør, sjekke bestilling
+    moving, //Beveger seg mot prioritert bestilling
+    emergency_stop
+} state;
 
 int main() {
     // Initialize hardware
@@ -34,24 +29,32 @@ int main() {
         printf("Unable to initialize elevator hardware!\n");
         return 1;
     }
-
-    typedef enum state_id { //hvorfor forskjellig navn på enum og identifier
-        idle = 0, //I ro uten bestillinger
-        in_floor, //I ro, åpne dør, sjekke bestilling
-        moving, //Beveger seg mot prioritert bestilling
-        emergency_stop
-    } state;
     
     state current_state = idle;
-    int orders[12];
     
     while (1) {
+        //Sjekk på stoppknapp for hver iterasjon
+        if(elev_get_stop_signal()) {
+            current_state = emergency_stop;
+        }
         
+        //Legg inn bestilling hvis en eller flere knapper trykkes
+        fsm_check_buttons_place_order(orders);
         
+        //Hvis i etasje, slett alle betillinger i samme etasje
+        int floor = elev_get_floor_sensor_signal();
+        if(floor != -1) {
+            if()//husk å sjekke på om knapp utenfor er trykket, åpne døren hvis så
+            order_erase_order(floor, orders);
+        }
         
         
         switch(current_state) {
             case(idle): {
+                if(order_check_for_order(orders)){
+                    
+                    current_state = moving;
+                }
             }
             case(in_floor): {
                 printf("In floor");
@@ -62,11 +65,11 @@ int main() {
                 break;
             }
             case(emergency_stop) : {
-                emergency_handler(orders);
+                fsm_emergency_handler(orders);
                 break;
             }
             default : {
-                
+                return 0;
             }
         }
         
