@@ -45,7 +45,7 @@ int main() {
         int floor = elev_get_floor_sensor_signal();
         if(floor != -1) {
             if(orders[N_BUTTONS*floor] || orders[N_BUTTONS*floor + 1] ) {
-                fsm_open_door();
+                fsm_open_door(orders);
             }
             order_erase_order(floor, orders);
         }
