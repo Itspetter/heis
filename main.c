@@ -52,27 +52,34 @@ int main() {
         
         //Hvis i etasje, slett alle betillinger i samme etasje
         int floor = elev_get_floor_sensor_signal();
-        if(floor != -1) {
-            if(orders[N_BUTTONS*floor] || orders[N_BUTTONS*floor + 1] ) {
-                fsm_open_door(orders);
-            }
-            order_erase_order(floor, orders);
-        }
+       
         
         
         switch(current_state) {
             case(idle): {
+                printf("Idle");
                 if(order_check_for_order(orders)){
-                    
+                    if(order_same_floor_order(floor, orders))
+                        current_state = in_floor;
                     current_state = moving;
                 }
             }
             case(in_floor): {
                 printf("In floor");
-                break;
+                if(order_same_floor_order(floor, orders)) {
+                    fsm_open_door(orders);
+                    order_erase_order(floor, orders);
+                }
+                else if(order_check_for_order(orders)) {
+                    current_state = moving;
+                }
+                else {
+                    current_state = idle;
+                }
             }
+                break;
             case(moving) : {
-                printf("In floor");
+                printf("Moving");
                 break;
             }
             case(emergency_stop) : {
