@@ -44,7 +44,9 @@ int main() {
         //Hvis i etasje, slett alle betillinger i samme etasje
         int floor = elev_get_floor_sensor_signal();
         if(floor != -1) {
-            if()//husk å sjekke på om knapp utenfor er trykket, åpne døren hvis så
+            if(orders[N_BUTTONS*floor] || orders[N_BUTTONS*floor + 1] ) {
+                fsm_open_door();
+            }
             order_erase_order(floor, orders);
         }
         
@@ -81,11 +83,6 @@ int main() {
             elev_set_motor_direction(DIRN_UP);
         }
 
-        // Stop elevator and exit program if the stop button is pressed
-        if (elev_get_stop_signal()) {
-            elev_set_motor_direction(DIRN_STOP);
-            break;
-        }
     }
 
     return 0;

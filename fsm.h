@@ -11,12 +11,13 @@
 
 #include "elev.h"
 #include "order.h"
+#include <time.h>
 
 void fsm_emergency_handler(int order[]);
 
 void fsm_check_buttons_place_order(int orders[]);
 
-int fsm_order_
+void fsm_open_door(int orders[]);
 
 
 
