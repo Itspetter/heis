@@ -10,14 +10,20 @@
 #define fsm_h
 
 #include "elev.h"
-#include "order.h"
 #include <time.h>
 
-void fsm_emergency_handler(int order[]);
 
-void fsm_check_buttons_place_order(int orders[]);
 
-void fsm_open_door(int orders[]);
+void fsm_emergency_handler();
+
+void fsm_check_buttons_place_order();
+
+void fsm_open_door();
+
+void fsm_timeout();
+
+//SKRIV OM DENNE!
+int fsm_is_order_in_same_floor() ;
 
 
 
