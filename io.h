@@ -12,7 +12,7 @@
   Initialize libComedi in "Sanntidssalen"
   @return Non-zero on success and 0 on failure
 */
-int io_init();
+int io_init(void);
 
 
 

@@ -42,6 +42,9 @@ int main() {
     state current_state = idle;
     
     while (1) {
+        
+        /*
+         HENDELSER:
         //Sjekk på stoppknapp for hver iterasjon
         if(elev_get_stop_signal()) {
             current_state = emergency_stop;
@@ -98,8 +101,7 @@ int main() {
         } else if (elev_get_floor_sensor_signal() == 0) {
             elev_set_motor_direction(DIRN_UP);
         }
-
+         */
     }
-
     return 0;
 }
