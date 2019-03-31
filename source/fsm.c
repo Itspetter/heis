@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include "fsm.h"
 #include "timer.h"
+#include "elev.h"
 
 
 
@@ -61,6 +62,7 @@ void fsm_timeout() {
     timer_stop(); 
 }
 
+/* Tenker at denne er unødvendig
 int fsm_is_order_in_same_floor() {
     if(order_same_floor_order(elev_get_floor_sensor_signal())){
         return 1;
@@ -68,4 +70,11 @@ int fsm_is_order_in_same_floor() {
     else {
         return 0;
         }
+}*/
+
+void fsm_moving() {
+    //TEST
+    void elev_set_motor_direction(DIRN_UP);
+    
 }
+

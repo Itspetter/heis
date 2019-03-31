@@ -23,7 +23,9 @@ void fsm_open_door();
 void fsm_timeout();
 
 //SKRIV OM DENNE!
-int fsm_is_order_in_same_floor() ;
+//int fsm_is_order_in_same_floor() ;
+
+void fsm_moving(); 
 
 
 

@@ -12,7 +12,7 @@ typedef enum state_id { //hvorfor forskjellig navn på enum og identifier
 } state;
 
 
-
+//TEST VI KAN KJØRE PÅ MANDAG: HA HEISEN I ETASJE. TRYKK PÅ KNAPP I SAMME ETASJE. SE OM DØREN ÅPNER SEG. TRYKK DERETTER PÅ ANNEN ETASJE. SE OM DEN KJØRER OPPOVER
 
 int main() {
     // Initialize hardware
@@ -21,6 +21,7 @@ int main() {
         return 1;
     }
     
+    //KAN GÅ UT IFRA IDLE SIDEN INIT
     state current_state = idle;
     
     while (1) {
@@ -48,6 +49,8 @@ int main() {
                     }
                     else{ current_state = moving;} 
                 }
+                //FORSIKRING (EVT UNDERSTREKING)
+                else { current_state = idle; }
                 break;
             }
             case(open_door): {
@@ -57,22 +60,24 @@ int main() {
                 if(timer_timeout()) {
                     fsm_timeout();
                     if(order_check_for_order()) {
-                        if(fsm_is_order_in_same_floor){
+                        if(order_same_floor_order(floor)){
                         //Hvis bestilling i samme etg, åpne dør og slett bestilling
                         order_erase_order(elev_get_floor_sensor_signal());
                         fsm_open_door();
                         current_state = open_door;
                         }
+                        //Ellers: bestilling i annen etasje
                         else { current_state = moving; }
                     }
                     else { current_state = idle; }
                 }
+                //FORSIKRING
+                else { current_state = open_door; }
                 break;
             }
             case(moving): {
                 printf("Moving");
-                elev_set_motor_direction(DIRN_UP);
-
+                fsm_moving(); 
 
                 break;
             }
