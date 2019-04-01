@@ -25,6 +25,8 @@ void order_place_order(elev_button_type_t button, int floor){
 }
 
 void order_erase_order(int floor){
+    //HVIS IKKE I ETASJE - IKKE HANDLE
+    if(floor == -1) { return; }
     for(int i = 0; i < N_BUTTONS; i++)
     {
         orders[N_BUTTONS*floor + i] = 0;
@@ -32,5 +34,6 @@ void order_erase_order(int floor){
 }
 
 int order_same_floor_order(int floor){
+    if(floor == -1) { return; }
     return (orders[N_BUTTONS*floor] || orders[N_BUTTONS*floor + 1] || orders[N_BUTTONS*floor + 2]);
 }

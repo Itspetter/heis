@@ -33,43 +33,49 @@ int main() {
         //Legg inn bestilling hvis en eller flere knapper trykkes
         fsm_check_buttons_place_order();
         
+        //OBS: LEGG INN MINNE FOR FORRIGE ETASJE TIL NØDSTOPP
         int floor = elev_get_floor_sensor_signal();
         
         
         switch(current_state) {
             case(idle): {
-                printf("Idle");
                 //
                 if(order_check_for_order()){
                     if(order_same_floor_order(floor)){
                         //Hvis bestilling i samme etg, åpne dør og slett bestilling
-                        order_erase_order(elev_get_floor_sensor_signal());
+                        order_erase_order(floor);
                         fsm_open_door();
                         current_state = open_door;
                     }
                     else{ current_state = moving;} 
                 }
                 //FORSIKRING (EVT UNDERSTREKING)
-                else { current_state = idle; }
+                else {
+                    printf("Idle");
+                    current_state = idle;
+                }
                 break;
             }
             case(open_door): {
                 //HUSK: ANTA AT DØR _ER_ ÅPEN NÅR DU KOMMER HIT!
-                printf("Open Door");
                 //HVIS DØREN SKAL LUKKES
                 if(timer_timeout()) {
                     fsm_timeout();
                     if(order_check_for_order()) {
                         if(order_same_floor_order(floor)){
                         //Hvis bestilling i samme etg, åpne dør og slett bestilling
-                        order_erase_order(elev_get_floor_sensor_signal());
-                        fsm_open_door();
-                        current_state = open_door;
+                            order_erase_order(floor);
+                            fsm_open_door();
+                            current_state = open_door;
+                            printf("Open Door");
                         }
                         //Ellers: bestilling i annen etasje
                         else { current_state = moving; }
                     }
-                    else { current_state = idle; }
+                    else {
+                        printf("Idle");
+                        current_state = idle;
+                    }
                 }
                 //FORSIKRING
                 else { current_state = open_door; }
@@ -77,18 +83,20 @@ int main() {
             }
             case(moving): {
                 printf("Moving");
-                fsm_moving(); 
-
+                fsm_moving();
                 break;
             }
             case(emergency_stop): {
                 fsm_emergency_handler();
                 //HVIS I ETASJE, GÅ TIL OPEN DOOR FOR Å LUKKE DØREN
-                if(elev_get_floor_sensor_signal()) {
+                if(elev_get_floor_sensor_signal() != -1) {
+                    printf("Open Door");
                     current_state = open_door;
                 }
                 else {
                     //HVIS IKKE I ETASJE, VENT TIL BESTILLING
+                    //SPØR OM DETTE
+                    printf("Idle");
                     current_state = idle; //OBS: IDLE MIDT I MELLOM TO ETASJER?
                 }
                 break;
