@@ -20,6 +20,10 @@ int main() {
         printf("Unable to initialize elevator hardware!\n");
         return 1;
     }     
+
+    //HVA SKJER VED KJØRING: init går veldig fint. Knapper nullstilles.
+    //Trykker i samme etasje -> døren åpner!
+    //Bestilling i etasje under -> moving -> beveger seg nedover
     
     //KAN GÅ UT IFRA IDLE SIDEN INIT
     state current_state = idle;
@@ -106,14 +110,12 @@ int main() {
             }
         }
         
-        /*
         // Change direction when we reach top/bottom floor
         if (elev_get_floor_sensor_signal() == N_FLOORS - 1) {
             elev_set_motor_direction(DIRN_DOWN);
         } else if (elev_get_floor_sensor_signal() == 0) {
             elev_set_motor_direction(DIRN_UP);
         }
-        */
 
     }
 
