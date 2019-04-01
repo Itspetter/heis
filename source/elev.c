@@ -8,7 +8,7 @@
 #include "elev.h"
 #include "io.h"
 
-
+#include <stdio.h>
 #include <assert.h>
 #include <stdlib.h>
 #include <time.h>
@@ -32,8 +32,10 @@ int elev_init(void) {
     int i;
 
     // Init hardware
-    if (!io_init())
+    if (!io_init()){
+        printf("failed io init \n");
         return 0;
+        }
 
     // Zero all floor button lamps
     for (i = 0; i < N_FLOORS; ++i) {

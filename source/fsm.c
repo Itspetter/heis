@@ -8,6 +8,7 @@
 
 #include <stdio.h>
 #include "fsm.h"
+#include "order.h"
 #include "timer.h"
 #include "elev.h"
 
@@ -74,7 +75,7 @@ int fsm_is_order_in_same_floor() {
 
 void fsm_moving() {
     //TEST
-    void elev_set_motor_direction(DIRN_UP);
+    elev_set_motor_direction(DIRN_UP);
     
 }
 

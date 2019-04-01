@@ -34,6 +34,6 @@ void order_erase_order(int floor){
 }
 
 int order_same_floor_order(int floor){
-    if(floor == -1) { return; }
+    if(floor == -1) { return 0; }
     return (orders[N_BUTTONS*floor] || orders[N_BUTTONS*floor + 1] || orders[N_BUTTONS*floor + 2]);
 }
