@@ -41,7 +41,7 @@ int main() {
                 printf("Idle");
                 //
                 if(order_check_for_order()){
-                    if(fsm_is_order_in_same_floor){
+                    if(order_same_floor_order(floor)){
                         //Hvis bestilling i samme etg, åpne dør og slett bestilling
                         order_erase_order(elev_get_floor_sensor_signal());
                         fsm_open_door();
