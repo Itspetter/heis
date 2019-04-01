@@ -25,7 +25,7 @@ void fsm_emergency_handler() {
     }
     
     //Hvis i etasje og døren er lukket, åpne døren
-    if(elev_get_floor_sensor_signal() && timer_timeout()) {
+    if((elev_get_floor_sensor_signal() != (-1)) && timer_timeout()) {
         fsm_open_door();
     }
     
@@ -34,10 +34,9 @@ void fsm_emergency_handler() {
     elev_set_stop_lamp(0);
     
     //Sjekker på om i etasje - holder døren åpen i ytterligere 3 sek
-    if(elev_get_floor_sensor_signal()) {
+    if(elev_get_floor_sensor_signal() != -1) {
         fsm_open_door();
     }
-    //MÅ LEGGE INN FUNKSJONALITET HER SLIK AT DØREN LUKKES 3 SEK ETTER
 }
 
 void fsm_check_buttons_place_order() {
@@ -73,11 +72,8 @@ int fsm_is_order_in_same_floor() {
         }
 }*/
 
-void fsm_moving() {
+void fsm_moving_up() {
     //TEST
     elev_set_motor_direction(DIRN_UP);
-    int i = 0; 
-    while(1000 -i) {i--;};
-    elev_set_motor_direction(DIRN_STOP);
 }
 

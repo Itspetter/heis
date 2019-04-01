@@ -21,11 +21,15 @@ int main() {
         return 1;
     }     
 
-    //HVA SKJER VED KJØRING: init går veldig fint. Knapper nullstilles.
-    //Trykker i samme etasje -> døren åpner!
-    //Bestilling i etasje under -> moving -> beveger seg nedover
+    //FUNKER PR 01.04: Init går veldig fint. Knapper nullstilles.
+    //Timer funker fint!
+    //Trykker i samme etasje -> døren åpner fint!
+    //Trykker i annen etasje -> går til moving!
+    //Emergency funker både i etasje og i bevegelse
+
+    //TO DO: MOVING! og fikse på hva som skal kalles fsm
     
-    //KAN GÅ UT IFRA IDLE SIDEN INIT
+    //I idle etter init
     state current_state = idle;
     
     while (1) {
@@ -37,18 +41,22 @@ int main() {
         //Legg inn bestilling hvis en eller flere knapper trykkes
         fsm_check_buttons_place_order();
         
-        //OBS: LEGG INN MINNE FOR FORRIGE ETASJE TIL NØDSTOPP
-        int floor = elev_get_floor_sensor_signal();
+        //MINNE FOR Å HUSKE SIST ETASJE NÅR VI ER I BEVEGELSE
+        int current_floor = elev_get_floor_sensor_signal();
+        int last_floor; 
+        if(current_floor != -1) {
+            last_floor = current_floor;
+        }
         
         
         switch(current_state) {
             case(idle): {
                 //
                 if(order_check_for_order()){
-                    if(order_same_floor_order(floor)){
+                    if(order_same_floor_order(current_floor)){
                         //Hvis bestilling i samme etg, åpne dør og slett bestilling
-                        order_erase_order(floor);
                         fsm_open_door();
+                        order_erase_order(current_floor);
                         current_state = open_door;
                     }
                     else{ current_state = moving;} 
@@ -64,10 +72,11 @@ int main() {
                 //HVIS DØREN SKAL LUKKES
                 if(timer_timeout()) {
                     fsm_timeout();
+                    order_erase_order(current_floor);
                     if(order_check_for_order()) {
-                        if(order_same_floor_order(floor)){
+                        if(order_same_floor_order(current_floor)){
                         //Hvis bestilling i samme etg, åpne dør og slett bestilling
-                            order_erase_order(floor);
+                            order_erase_order(current_floor);
                             fsm_open_door();
                             current_state = open_door;
                             printf("Open Door");
@@ -87,12 +96,13 @@ int main() {
                 break;
             }
             case(moving): {
-                fsm_moving();
+                fsm_moving_up();
                 break;
             }
             case(emergency_stop): {
                 fsm_emergency_handler();
-                //HVIS I ETASJE, GÅ TIL OPEN DOOR FOR Å LUKKE DØREN
+                //HVIS I ETASJE, GÅ TIL OPEN DOOR FOR Å LUKKE DØREN - VIKTIG"
+                
                 if(elev_get_floor_sensor_signal() != -1) {
                     printf("Open Door");
                     current_state = open_door;
@@ -112,38 +122,15 @@ int main() {
         
         // Change direction when we reach top/bottom floor
         if (elev_get_floor_sensor_signal() == N_FLOORS - 1) {
-            elev_set_motor_direction(DIRN_DOWN);
+            elev_set_motor_direction(DIRN_STOP);
+            current_state = idle; 
         } else if (elev_get_floor_sensor_signal() == 0) {
             elev_set_motor_direction(DIRN_UP);
         }
 
     }
+    elev_set_motor_direction(DIRN_STOP);
 
     return 0;
 }
 
-
-/*
-
-while(1) {
-    switch (state)
-    {
-        case idle:
-            if (order_exist())
-                fsm_orderExists()
-             code 
-            break;
-    
-        case moving:
-            break;
-    }
-
-
-}
-
-
-fsm_orderExists() 
-    
-    set_dir
-    set motor onorder_same_floor_order
-    */
