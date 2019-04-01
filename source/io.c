@@ -21,9 +21,10 @@ int io_init() {
 
     it_g = comedi_open("/dev/comedi0");
 
-    if (it_g == NULL)
-        printf("failed comedi \n");
+    if (it_g == NULL){
+        printf("failed comedi it_g \n");
         return 0;
+    }
 
     for (i = 0; i < 8; i++) {
         status |= comedi_dio_config(it_g, PORT1, i, COMEDI_INPUT);
@@ -31,7 +32,7 @@ int io_init() {
         status |= comedi_dio_config(it_g, PORT3, i + 8, COMEDI_OUTPUT);
         status |= comedi_dio_config(it_g, PORT4, i + 16, COMEDI_INPUT);
     }
-
+    
     return (status == 0);
 }
 

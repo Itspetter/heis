@@ -75,7 +75,6 @@ int fsm_is_order_in_same_floor() {
 
 void fsm_moving() {
     //TEST
-    elev_set_motor_direction(DIRN_UP);
-    
+    elev_set_motor_direction(DIRN_DOWN);
 }
 

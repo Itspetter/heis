@@ -33,10 +33,10 @@ int elev_init(void) {
 
     // Init hardware
     if (!io_init()){
-        printf("failed io init \n");
+        printf("failed io initialize io\n");
         return 0;
         }
-
+    
     // Zero all floor button lamps
     for (i = 0; i < N_FLOORS; ++i) {
         if (i != 0)

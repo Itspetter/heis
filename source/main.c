@@ -19,7 +19,7 @@ int main() {
     if (!elev_init()) {
         printf("Unable to initialize elevator hardware!\n");
         return 1;
-    }
+    }     
     
     //KAN GÅ UT IFRA IDLE SIDEN INIT
     state current_state = idle;
@@ -51,7 +51,6 @@ int main() {
                 }
                 //FORSIKRING (EVT UNDERSTREKING)
                 else {
-                    printf("Idle");
                     current_state = idle;
                 }
                 break;
@@ -70,7 +69,9 @@ int main() {
                             printf("Open Door");
                         }
                         //Ellers: bestilling i annen etasje
-                        else { current_state = moving; }
+                        else {
+                            printf("Moving"); 
+                            current_state = moving; }
                     }
                     else {
                         printf("Idle");
@@ -82,7 +83,6 @@ int main() {
                 break;
             }
             case(moving): {
-                printf("Moving");
                 fsm_moving();
                 break;
             }
@@ -106,13 +106,14 @@ int main() {
             }
         }
         
-        
+        /*
         // Change direction when we reach top/bottom floor
         if (elev_get_floor_sensor_signal() == N_FLOORS - 1) {
             elev_set_motor_direction(DIRN_DOWN);
         } else if (elev_get_floor_sensor_signal() == 0) {
             elev_set_motor_direction(DIRN_UP);
         }
+        */
 
     }
 
