@@ -12,8 +12,9 @@ typedef enum state_id { //hvorfor forskjellig navn på enum og identifier
 } state;
 
 
-//TEST VI KAN KJØRE PÅ MANDAG: HA HEISEN I ETASJE. TRYKK PÅ KNAPP I SAMME ETASJE. SE OM DØREN ÅPNER SEG. TRYKK DERETTER PÅ ANNEN ETASJE. SE OM DEN KJØRER OPPOVER
-
+//OBS: HER GJØR VI ET VALG OM HVILKEN VEI VI PRIORITERER
+//NÅR TO KNAPPER INNE I HEISEN ER TRYKKET.
+//BURDE VEL EGENTLIG HA DEN NÆRMESTE ETASJEN? -> get_closest_cab_order
 int main() {
     // Initialize hardware
     if (!elev_init()) {
@@ -97,6 +98,8 @@ int main() {
                             printf("Open Door");
                         }
                         //Ellers: bestilling i annen etasje
+                        //OBS: HER GJØR VI ET VALG OM HVILKEN VEI VI PRIORITERER
+                        //NÅR TO KNAPPER INNE I HEISEN ER TRYKKET.
                         else {
                             printf("Moving");
                             if(order_cab_order_above(last_floor)) {
@@ -147,10 +150,8 @@ int main() {
                     current_state = open_door;
                 }
                 else {
-                    //HVIS IKKE I ETASJE, VENT TIL BESTILLING
-                    //SPØR OM DETTE
                     printf("Idle");
-                    current_state = idle; //OBS: IDLE MIDT I MELLOM TO ETASJER?
+                    current_state = idle; 
                 }
                 break;
             }
@@ -158,9 +159,9 @@ int main() {
                 return 0;
             }
         }
-        
 
     }
+
     elev_set_motor_direction(DIRN_STOP);
 
     return 0;
