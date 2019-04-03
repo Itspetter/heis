@@ -29,7 +29,14 @@ void order_erase_order(int floor){
     if(floor == -1) { return; }
     for(int i = 0; i < N_BUTTONS; i++)
     {
+        if(floor == 0 && i == 1) { 
+            continue; 
+        }
+        if(floor == 3 && i == 0) { 
+            continue;  
+        }
         orders[N_BUTTONS*floor + i] = 0;
+        elev_set_button_lamp(i,floor,0);
     }
 }
 

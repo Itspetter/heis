@@ -45,6 +45,7 @@ void fsm_check_buttons_place_order() {
             if(!((i == 0 && j == 3) || (i == 1 && j == 0))) {
                 if(elev_get_button_signal(i, j)) {
                     order_place_order(i, j);
+                    elev_set_button_lamp(i,j,1);
                 }
             }
         }
