@@ -24,4 +24,10 @@ void order_erase_order(int floor);
 //Sjekker om det er bestillinger i samme etasje
 int order_same_floor_order(int floor);
 
+int order_order_below(int floor);
+
+int order_order_above(int floor);
+
+
+
 #endif /* order_h */

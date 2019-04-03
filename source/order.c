@@ -37,3 +37,23 @@ int order_same_floor_order(int floor){
     if(floor == -1) { return 0; }
     return (orders[N_BUTTONS*floor] || orders[N_BUTTONS*floor + 1] || orders[N_BUTTONS*floor + 2]);
 }
+
+
+//HUSK: MÅ SENDE INN LAST FLOOR
+int order_order_below(int floor) {
+    for(int i = 0; i < floor; i++) {
+        if(order_same_floor_order(i)) { 
+            return 1; 
+        }
+    }
+    return 0;
+}
+
+int order_order_above(int floor) {
+    for(int i = floor +1; i <= N_FLOORS; i++) {
+        if(order_same_floor_order(i)) { 
+            return 1; 
+        }
+    }
+    return 0;
+}

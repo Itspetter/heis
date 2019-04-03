@@ -59,6 +59,7 @@ int main() {
                         order_erase_order(current_floor);
                         current_state = open_door;
                     }
+
                     else{ current_state = moving;} 
                 }
                 //FORSIKRING (EVT UNDERSTREKING)
@@ -67,7 +68,7 @@ int main() {
                 }
                 break;
             }
-            case(open_door): {
+            case(open_door) : {
                 //HUSK: ANTA AT DØR _ER_ ÅPEN NÅR DU KOMMER HIT!
                 //HVIS DØREN SKAL LUKKES
                 if(timer_timeout()) {
@@ -83,9 +84,11 @@ int main() {
                         }
                         //Ellers: bestilling i annen etasje
                         else {
-                            printf("Moving"); 
-                            current_state = moving; }
-                    }
+                            printf("Moving");
+                            
+                            current_state = moving; 
+                        }
+                    }   
                     else {
                         printf("Idle");
                         current_state = idle;
@@ -95,8 +98,20 @@ int main() {
                 else { current_state = open_door; }
                 break;
             }
-            case(moving): {
-                fsm_moving_up();
+            case(moving) : {
+                //fsm_moving_up();
+                if(order_same_floor_order(current_floor)) {
+                    elev_set_motor_direction(DIRN_STOP);
+                    fsm_open_door();
+                    current_state = open_door; 
+                }
+                else if(order_order_above(last_floor)) {
+                    elev_set_motor_direction(DIRN_UP);
+                 }
+                else if (order_order_below(last_floor)){
+                     elev_set_motor_direction(DIRN_DOWN);
+                }
+                
                 break;
             }
             case(emergency_stop): {
@@ -121,12 +136,12 @@ int main() {
         }
         
         // Change direction when we reach top/bottom floor
-        if (elev_get_floor_sensor_signal() == N_FLOORS - 1) {
+        /*if (elev_get_floor_sensor_signal() == N_FLOORS - 1) {
             elev_set_motor_direction(DIRN_STOP);
             current_state = idle; 
         } else if (elev_get_floor_sensor_signal() == 0) {
             elev_set_motor_direction(DIRN_UP);
-        }
+        }*/
 
     }
     elev_set_motor_direction(DIRN_STOP);
