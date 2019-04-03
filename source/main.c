@@ -31,7 +31,8 @@ int main() {
     
     //I idle etter init
     state current_state = idle;
-    
+    elev_motor_direction_t direction;
+
     while (1) {
         //Sjekk på stoppknapp for hver iterasjon
         if(elev_get_stop_signal()) {
@@ -46,6 +47,7 @@ int main() {
         int last_floor; 
         if(current_floor != -1) {
             last_floor = current_floor;
+            elev_set_floor_indicator(current_floor);
         }
         
         
@@ -60,7 +62,19 @@ int main() {
                         current_state = open_door;
                     }
 
-                    else{ current_state = moving;} 
+
+                    else{ 
+                        if(order_order_above(last_floor)) {
+                            elev_set_motor_direction(DIRN_UP);
+                            direction = DIRN_UP;
+                        }
+                        else if (order_order_below(last_floor)) {
+                            elev_set_motor_direction(DIRN_DOWN);
+                            direction = DIRN_DOWN;
+                        }
+                        current_state = moving;
+                    
+                    } 
                 }
                 //FORSIKRING (EVT UNDERSTREKING)
                 else {
@@ -69,11 +83,11 @@ int main() {
                 break;
             }
             case(open_door) : {
+                order_erase_order(current_floor);
                 //HUSK: ANTA AT DØR _ER_ ÅPEN NÅR DU KOMMER HIT!
                 //HVIS DØREN SKAL LUKKES
                 if(timer_timeout()) {
                     fsm_timeout();
-                    order_erase_order(current_floor);
                     if(order_check_for_order()) {
                         if(order_same_floor_order(current_floor)){
                         //Hvis bestilling i samme etg, åpne dør og slett bestilling
@@ -85,12 +99,20 @@ int main() {
                         //Ellers: bestilling i annen etasje
                         else {
                             printf("Moving");
-                            
+                            if(order_order_above(last_floor)) {
+                                elev_set_motor_direction(DIRN_UP);
+                                direction = DIRN_UP;
+                            }
+                            else if (order_order_below(last_floor)) {
+                                elev_set_motor_direction(DIRN_DOWN);
+                                direction = DIRN_DOWN;
+                            }
                             current_state = moving; 
                         }
                     }   
                     else {
                         printf("Idle");
+                        
                         current_state = idle;
                     }
                 }
@@ -99,19 +121,19 @@ int main() {
                 break;
             }
             case(moving) : {
-                //fsm_moving_up();
-                if(order_same_floor_order(current_floor)) {
+                
+
+                if(order_same_floor_order(current_floor) && order_is_order_same_dir(current_floor, direction)) {
                     elev_set_motor_direction(DIRN_STOP);
                     fsm_open_door();
                     current_state = open_door; 
                 }
-                else if(order_order_above(last_floor)) {
-                    elev_set_motor_direction(DIRN_UP);
-                 }
-                else if (order_order_below(last_floor)){
-                     elev_set_motor_direction(DIRN_DOWN);
-                }
                 
+
+
+
+
+
                 break;
             }
             case(emergency_stop): {
@@ -135,13 +157,6 @@ int main() {
             }
         }
         
-        // Change direction when we reach top/bottom floor
-        /*if (elev_get_floor_sensor_signal() == N_FLOORS - 1) {
-            elev_set_motor_direction(DIRN_STOP);
-            current_state = idle; 
-        } else if (elev_get_floor_sensor_signal() == 0) {
-            elev_set_motor_direction(DIRN_UP);
-        }*/
 
     }
     elev_set_motor_direction(DIRN_STOP);

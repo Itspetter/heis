@@ -62,19 +62,3 @@ void fsm_timeout() {
     elev_set_door_open_lamp(0);
     timer_stop(); 
 }
-
-/* Tenker at denne er unødvendig
-int fsm_is_order_in_same_floor() {
-    if(order_same_floor_order(elev_get_floor_sensor_signal())){
-        return 1;
-    }
-    else {
-        return 0;
-        }
-}*/
-
-void fsm_moving_up() {
-    //TEST
-    elev_set_motor_direction(DIRN_UP);
-}
-

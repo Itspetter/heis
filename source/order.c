@@ -64,3 +64,23 @@ int order_order_above(int floor) {
     }
     return 0;
 }
+
+int order_is_order_same_dir(int floor, elev_motor_direction_t dir) {
+    if((floor == 0) || (floor == 3)) {
+        return 1; 
+    }
+    int num_orders = 0; 
+    for(int i = 0; i < 12; i++) {
+        num_orders += orders[i];
+    }
+    if(num_orders == 1) {
+        return 1;
+    }
+    if((orders[N_BUTTONS*floor] && dir == DIRN_UP)) {
+        return 1; 
+    }
+    if(orders[N_BUTTONS*floor + 1] && dir == DIRN_DOWN) {
+        return 1;
+    }
+    return 0;
+}
