@@ -21,14 +21,9 @@ int main() {
         return 1;
     }     
 
-    //FUNKER PR 01.04: Init går veldig fint. Knapper nullstilles.
-    //Timer funker fint!
-    //Trykker i samme etasje -> døren åpner fint!
-    //Trykker i annen etasje -> går til moving!
-    //Emergency funker både i etasje og i bevegelse
+    //TO DO: LEGGE INN AT KNAPPER I HEISEN HAR HØYEST PRESEDENS
 
-    //TO DO: MOVING! og fikse på hva som skal kalles fsm
-    
+
     //I idle etter init
     state current_state = idle;
     elev_motor_direction_t direction;
@@ -61,8 +56,6 @@ int main() {
                         order_erase_order(current_floor);
                         current_state = open_door;
                     }
-
-
                     else{ 
                         if(order_order_above(last_floor)) {
                             elev_set_motor_direction(DIRN_UP);
@@ -72,11 +65,18 @@ int main() {
                             elev_set_motor_direction(DIRN_DOWN);
                             direction = DIRN_DOWN;
                         }
+                        else if (order_same_floor_order(last_floor)) {
+                            if(direction == DIRN_DOWN) {
+                                elev_set_motor_direction(DIRN_UP);
+                            }
+                            else {
+                                elev_set_motor_direction(DIRN_DOWN);
+                            }
+                        }
                         current_state = moving;
-                    
                     } 
                 }
-                //FORSIKRING (EVT UNDERSTREKING)
+                //FORSIKRING 
                 else {
                     current_state = idle;
                 }
@@ -99,7 +99,15 @@ int main() {
                         //Ellers: bestilling i annen etasje
                         else {
                             printf("Moving");
-                            if(order_order_above(last_floor)) {
+                            if(order_cab_order_above(last_floor)) {
+                                elev_set_motor_direction(DIRN_UP);
+                                direction = DIRN_UP;
+                            }
+                            else if(order_cab_order_below(last_floor)){
+                                elev_set_motor_direction(DIRN_DOWN);
+                                direction = DIRN_DOWN;
+                            }
+                            else if(order_order_above(last_floor)) {
                                 elev_set_motor_direction(DIRN_UP);
                                 direction = DIRN_UP;
                             }
@@ -121,18 +129,11 @@ int main() {
                 break;
             }
             case(moving) : {
-                
-
                 if(order_same_floor_order(current_floor) && order_is_order_same_dir(current_floor, direction)) {
                     elev_set_motor_direction(DIRN_STOP);
                     fsm_open_door();
                     current_state = open_door; 
                 }
-                
-
-
-
-
 
                 break;
             }
@@ -142,6 +143,7 @@ int main() {
                 
                 if(elev_get_floor_sensor_signal() != -1) {
                     printf("Open Door");
+                    //fsm_open_door kalles inne i emergency handler
                     current_state = open_door;
                 }
                 else {

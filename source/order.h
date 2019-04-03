@@ -30,6 +30,8 @@ int order_order_above(int floor);
 
 int order_is_order_same_dir(int floor, elev_motor_direction_t dir);
 
-
+int order_cab_order_above(int floor);
+int order_cab_order_below(int floor);
+int order_cab_order_in_floor(int floor);
 
 #endif /* order_h */

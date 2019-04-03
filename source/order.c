@@ -45,6 +45,11 @@ int order_same_floor_order(int floor){
     return (orders[N_BUTTONS*floor] || orders[N_BUTTONS*floor + 1] || orders[N_BUTTONS*floor + 2]);
 }
 
+int order_cab_order_in_floor(int floor) {
+    if(floor == -1) { return 0; }
+    return (orders[N_BUTTONS*floor + 2]);
+}
+
 
 //HUSK: MÅ SENDE INN LAST FLOOR
 int order_order_below(int floor) {
@@ -57,7 +62,7 @@ int order_order_below(int floor) {
 }
 
 int order_order_above(int floor) {
-    for(int i = floor +1; i <= N_FLOORS; i++) {
+    for(int i = floor+1 ; i <= N_FLOORS; i++) {
         if(order_same_floor_order(i)) { 
             return 1; 
         }
@@ -65,7 +70,27 @@ int order_order_above(int floor) {
     return 0;
 }
 
+int order_cab_order_above(int floor) {
+    for(int i = floor+1 ; i <= N_FLOORS; i++) {
+        if(order_cab_order_in_floor(i)) { 
+            return 1; 
+        }
+    }
+    return 0;
+}
+int order_cab_order_below(int floor) {
+    for(int i = 0; i < floor; i++) {
+        if(order_cab_order_in_floor(i)) { 
+            return 1; 
+        }
+    }
+    return 0;
+}
+
 int order_is_order_same_dir(int floor, elev_motor_direction_t dir) {
+    if(orders[N_BUTTONS*floor +2]) {
+        return 1; 
+    }
     if((floor == 0) || (floor == 3)) {
         return 1; 
     }
