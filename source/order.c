@@ -12,12 +12,7 @@
 int THRESHOLD = 6; 
 
 int orders[12];
-<<<<<<< HEAD
-int last_checked = 0;
-=======
-time_t time_stamp[12] = {0};
 
->>>>>>> master
 
 int order_check_for_order(){
     for(int i = 0; i < 12; i++)
@@ -30,7 +25,7 @@ int order_check_for_order(){
 void order_place_order(elev_button_type_t button, int floor){
     int button_value = button;
     orders[N_BUTTONS*floor + button_value] = 1;
-    time_stamp[N_BUTTONS*floor + button_value] = time(NULL);
+  
 }
 
 void order_erase_order(int floor){
@@ -44,7 +39,7 @@ void order_erase_order(int floor){
         if(floor == 3 && i == 0) { 
             continue;  
         }
-        time_stamp[N_BUTTONS*floor + i] = 0;
+        
         orders[N_BUTTONS*floor + i] = 0;
         elev_set_button_lamp(i,floor,0);
     }
@@ -121,35 +116,24 @@ int order_is_order_same_dir(int floor, elev_motor_direction_t dir) {
 }
 
 elev_motor_direction_t order_get_dir(int floor, elev_motor_direction_t last_direction) {
-    //if(last_checked == 11) {
-    //    last_checked = 0;
-    //}
-
-
     if(last_direction == DIRN_UP){
-            for(int i = 12; i > 0; i--) {
-                if(orders[i]) {
-
-                //last_checked = i; 
-            
+        for(int i = 12; i > 0; i--) {
+            if(orders[i]) {          
                 if(i > floor*3) {
-                    return DIRN_UP; 
+                   return DIRN_UP; 
                 }
-            return DIRN_DOWN; 
-            } 
-         }
+            return DIRN_DOWN;                 } 
+        }
     }
 
     for(int i = 0; i < 12; i++) {
         if(orders[i]) {
-
-            //last_checked = i; 
-            
             if(i > floor*3) {
                 return DIRN_UP; 
             }
-            return DIRN_DOWN; 
+        return DIRN_DOWN; 
         } 
     }
     return DIRN_STOP;
 }
+
