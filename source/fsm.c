@@ -62,3 +62,8 @@ void fsm_timeout() {
     elev_set_door_open_lamp(0);
     timer_stop(); 
 }
+
+void fsm_order_in_current_floor() {
+    order_erase_order(elev_get_floor_sensor_signal());
+    fsm_open_door();
+}

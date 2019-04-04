@@ -52,9 +52,7 @@ int main() {
                 //
                 if(order_check_for_order()){
                     if(order_same_floor_order(current_floor)){
-                        //Hvis bestilling i samme etg, åpne dør og slett bestilling
-                        fsm_open_door();
-                        order_erase_order(current_floor);
+                        fsm_order_in_current_floor();
                         current_state = open_door;
                     }
                     else{ 
@@ -87,16 +85,14 @@ int main() {
             }
             case(open_door) : {
                 if(order_same_floor_order(current_floor)){
-                    fsm_open_door();
-                    order_erase_order(current_floor);
+                    fsm_order_in_current_floor();
                     current_state = open_door;
                 }
                 if(timer_timeout()) {
                     fsm_timeout();
                     if(order_check_for_order()) {
                         if(order_same_floor_order(current_floor)){
-                            order_erase_order(current_floor);
-                            fsm_open_door();
+                            fsm_order_in_current_floor();
                             current_state = open_door;
                         }
                         else {
@@ -117,8 +113,7 @@ int main() {
             case(moving) : {
                 if(order_same_floor_order(current_floor) && order_is_order_same_dir(current_floor, direction)) {
                     elev_set_motor_direction(DIRN_STOP);
-                    order_erase_order(current_floor);
-                    fsm_open_door();
+                    fsm_order_in_current_floor();
                     current_state = open_door; 
                 }
 

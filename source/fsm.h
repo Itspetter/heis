@@ -24,4 +24,6 @@ void fsm_timeout();
 
 int fsm_should_handle();
 
+void fsm_order_in_current_floor();
+
 #endif /* fsm_h */
