@@ -18,7 +18,7 @@ int order_check_for_order();
 //skal legge 1 på plassen i order-arrayet som tilhører button og floor.
 void order_place_order(elev_button_type_t button, int floor);
 
-//Alle bestillinger som skal til den etasjen slettes
+//Alle bestillinger som skal til den eStasjen slettes
 void order_erase_order(int floor);
 
 //Sjekker om det er bestillinger i samme etasje
@@ -33,5 +33,7 @@ int order_is_order_same_dir(int floor, elev_motor_direction_t dir);
 int order_cab_order_above(int floor);
 int order_cab_order_below(int floor);
 int order_cab_order_in_floor(int floor);
+
+int order_treshold_exceeded(void);
 
 #endif /* order_h */

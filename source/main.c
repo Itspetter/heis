@@ -66,6 +66,8 @@ int main() {
                             elev_set_motor_direction(DIRN_DOWN);
                             direction = DIRN_DOWN;
                         }
+                        //HVIS NØDSTOPP TRYKKES MELLOM TO ETASJER
+                        //MÅ SNU RETNING TILBAKE
                         else if (order_same_floor_order(last_floor)) {
                             if(direction == DIRN_DOWN) {
                                 elev_set_motor_direction(DIRN_UP);
@@ -97,20 +99,21 @@ int main() {
                             current_state = open_door;
                             printf("Open Door");
                         }
-                        //Ellers: bestilling i annen etasje
-                        //OBS: HER GJØR VI ET VALG OM HVILKEN VEI VI PRIORITERER
-                        //NÅR TO KNAPPER INNE I HEISEN ER TRYKKET.
                         else {
-                            printf("Moving");
-                            if(order_cab_order_above(last_floor)) {
-                                elev_set_motor_direction(DIRN_UP);
-                                direction = DIRN_UP;
+                            //HVIS EN BESTILLING HAR VENTET FOR LENGE
+                            //HOPPER VI OVER CAB-KNAPPENE TIL OPP/NED ER BETJENT
+                            int a = order_treshold_exceeded();
+                            if(!a){
+                                if(order_cab_order_above(last_floor)) {
+                                    elev_set_motor_direction(DIRN_UP);
+                                    direction = DIRN_UP;
+                                }
+                                else if(order_cab_order_below(last_floor)){
+                                    elev_set_motor_direction(DIRN_DOWN);
+                                    direction = DIRN_DOWN;
+                                }
                             }
-                            else if(order_cab_order_below(last_floor)){
-                                elev_set_motor_direction(DIRN_DOWN);
-                                direction = DIRN_DOWN;
-                            }
-                            else if(order_order_above(last_floor)) {
+                            if(order_order_above(last_floor)) {
                                 elev_set_motor_direction(DIRN_UP);
                                 direction = DIRN_UP;
                             }
