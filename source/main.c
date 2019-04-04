@@ -21,17 +21,16 @@ int main() {
 
     //I idle etter init
     state current_state = idle;
-    elev_motor_direction_t direction = DIRN_STOP;
+    //elev_motor_direction_t direction = DIRN_STOP;
 
     while (1) {
 
         if(elev_get_stop_signal()) {
             current_state = emergency_stop;
         }
-        
+
         order_update();
         
-        //MINNE FOR Å HUSKE SIST ETASJE NÅR VI ER I BEVEGELSE
         int current_floor = elev_get_floor_sensor_signal();
         int last_floor; 
         if(current_floor != -1) {
@@ -51,17 +50,10 @@ int main() {
                         //HVIS NØDSTOPP TRYKKES MELLOM TO ETASJER
                         //MÅ SNU RETNING TILBAKE
                         if (order_same_floor_order(last_floor)) {
-                            if(direction == DIRN_DOWN) {
-                                elev_set_motor_direction(DIRN_UP);
-                            }
-                            else {
-                                elev_set_motor_direction(DIRN_DOWN);
-                            }
+                            fsm_order_in_last_floor();
                         }
                         else {
-                            elev_motor_direction_t prev_direction = direction;
-                            direction = order_get_dir(current_floor, prev_direction);
-                            elev_set_motor_direction(direction);
+                            fsm_start_moving();
                             current_state = moving;
                         }
                         current_state = moving;
@@ -86,9 +78,7 @@ int main() {
                             current_state = open_door;
                         }
                         else {
-                            elev_motor_direction_t prev_direction = direction;
-                            direction = order_get_dir(current_floor, prev_direction);
-                            elev_set_motor_direction(direction);
+                            fsm_start_moving();
                             current_state = moving; 
                         }
                     }   

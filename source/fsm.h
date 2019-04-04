@@ -12,7 +12,7 @@
 #include "elev.h"
 #include <time.h>
 
-
+elev_motor_direction_t direction;
 
 void fsm_emergency_handler();
 
@@ -20,8 +20,10 @@ void fsm_open_door();
 
 void fsm_timeout();
 
-int fsm_should_handle();
-
 void fsm_order_in_current_floor();
+
+void fsm_start_moving(); 
+
+void fsm_order_in_last_floor();
 
 #endif /* fsm_h */
