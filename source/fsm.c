@@ -60,10 +60,8 @@ void fsm_start_moving() {
 void fsm_order_in_last_floor() {
     if(direction == DIRN_DOWN) {
         elev_set_motor_direction(DIRN_UP);
-        direction = DIRN_UP;
     }
     else {
         elev_set_motor_direction(DIRN_DOWN);
-        direction = DIRN_DOWN;
     }
 }

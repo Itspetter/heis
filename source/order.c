@@ -11,6 +11,24 @@
 
 int orders[12];
 
+int order_order_below(int floor) {
+    for(int i = 0; i < floor; i++) {
+        if(order_same_floor_order(i)) {
+            return 1; 
+        }
+    }
+    return 0;
+}
+
+int order_order_above(int floor) {
+    for(int i = floor + 1; i <= N_FLOORS; i++) {
+        if(order_same_floor_order(i)) {
+            return 1; 
+        }
+    }
+    return 0; 
+}
+
 
 int order_check_for_order(){
     for(int i = 0; i < 12; i++)

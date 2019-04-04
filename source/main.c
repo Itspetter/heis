@@ -19,9 +19,7 @@ int main() {
         return 1;
     }     
 
-    //I idle etter init
     state current_state = idle;
-    //elev_motor_direction_t direction = DIRN_STOP;
 
     while (1) {
 
@@ -50,11 +48,21 @@ int main() {
                         //HVIS NØDSTOPP TRYKKES MELLOM TO ETASJER
                         //MÅ SNU RETNING TILBAKE
                         if (order_same_floor_order(last_floor)) {
+                            //FUNKER FINT
                             fsm_order_in_last_floor();
                         }
                         else {
-                            fsm_start_moving();
-                            current_state = moving;
+                            //OBS: SKJØNNER IKKE HVORFOR VI IKKE KAN 
+                            //HA FSM START MOVING HER. 
+                            if(order_order_above(last_floor)) {
+                                elev_set_motor_direction(DIRN_UP);
+                                direction = DIRN_UP;
+                            }
+                            else if(order_order_below(last_floor)) {
+                                elev_set_motor_direction(DIRN_DOWN);
+                                direction = DIRN_DOWN;
+                            }
+                            //fsm_start_moving();
                         }
                         current_state = moving;
                     } 
@@ -96,13 +104,10 @@ int main() {
                     fsm_order_in_current_floor();
                     current_state = open_door; 
                 }
-
                 break;
             }
             case(emergency_stop): {
                 fsm_emergency_handler();
-
-                //HVIS I ETASJE, GÅ TIL OPEN DOOR FOR Å LUKKE DØREN
                 if(elev_get_floor_sensor_signal() != -1) {
                     fsm_order_in_current_floor();
                     current_state = open_door;
