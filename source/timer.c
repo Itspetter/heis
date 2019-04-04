@@ -1,12 +1,11 @@
 #include "timer.h"
-
-
 #include <time.h>
 
 
 struct timeStruct {
     time_t timestamp;
 };
+
 
 static struct timeStruct start_time;
 

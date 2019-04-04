@@ -86,9 +86,11 @@ int main() {
                 break;
             }
             case(open_door) : {
-                order_erase_order(current_floor);
-                //HUSK: ANTA AT DØR _ER_ ÅPEN NÅR DU KOMMER HIT!
-                //HVIS DØREN SKAL LUKKES
+                if(order_same_floor_order(current_floor)){
+                    fsm_open_door();
+                    order_erase_order(current_floor);
+                    current_state = open_door;
+                }
                 if(timer_timeout()) {
                     fsm_timeout();
                     if(order_check_for_order()) {
@@ -115,6 +117,7 @@ int main() {
             case(moving) : {
                 if(order_same_floor_order(current_floor) && order_is_order_same_dir(current_floor, direction)) {
                     elev_set_motor_direction(DIRN_STOP);
+                    order_erase_order(current_floor);
                     fsm_open_door();
                     current_state = open_door; 
                 }
@@ -128,6 +131,7 @@ int main() {
                 if(elev_get_floor_sensor_signal() != -1) {
                     printf("Open Door");
                     //fsm_open_door kalles inne i emergency handler
+                    order_erase_order(current_floor);
                     current_state = open_door;
                 }
                 else {
