@@ -33,10 +33,6 @@ void fsm_emergency_handler() {
     while(elev_get_stop_signal());
     elev_set_stop_lamp(0);
     
-    //Sjekker på om i etasje - holder døren åpen i ytterligere 3 sek
-    if(elev_get_floor_sensor_signal() != -1) {
-        fsm_open_door();
-    }
 }
 
 void fsm_check_buttons_place_order() {

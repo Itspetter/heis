@@ -121,16 +121,13 @@ int main() {
             }
             case(emergency_stop): {
                 fsm_emergency_handler();
-                //HVIS I ETASJE, GÅ TIL OPEN DOOR FOR Å LUKKE DØREN - VIKTIG"
+                //HVIS I ETASJE, GÅ TIL OPEN DOOR FOR Å LUKKE DØREN
                 
                 if(elev_get_floor_sensor_signal() != -1) {
-                    printf("Open Door");
-                    //fsm_open_door kalles inne i emergency handler
-                    order_erase_order(current_floor);
+                    fsm_order_in_current_floor();
                     current_state = open_door;
                 }
                 else {
-                    printf("Idle");
                     current_state = idle; 
                 }
                 break;
