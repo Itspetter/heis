@@ -16,8 +16,6 @@
 
 void fsm_emergency_handler();
 
-void fsm_check_buttons_place_order();
-
 void fsm_open_door();
 
 void fsm_timeout();

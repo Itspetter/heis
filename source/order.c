@@ -9,8 +9,6 @@
 #include "order.h"
 #include <time.h>
 
-int THRESHOLD = 6; 
-
 int orders[12];
 
 
@@ -26,6 +24,19 @@ void order_place_order(elev_button_type_t button, int floor){
     int button_value = button;
     orders[N_BUTTONS*floor + button_value] = 1;
   
+}
+
+void order_update() {
+    for(int i = 0; i < 3; i++) {
+        for(int j = 0; j < 4; j++){
+            if(!((i == 0 && j == 3) || (i == 1 && j == 0))) {
+                if(elev_get_button_signal(i, j)) {
+                    order_place_order(i, j);
+                    elev_set_button_lamp(i,j,1);
+                }
+            }
+        }
+    }
 }
 
 void order_erase_order(int floor){
@@ -56,41 +67,6 @@ int order_cab_order_in_floor(int floor) {
 }
 
 
-//HUSK: MÅ SENDE INN LAST FLOOR
-int order_order_below(int floor) {
-    for(int i = 0; i < floor; i++) {
-        if(order_same_floor_order(i)) { 
-            return 1; 
-        }
-    }
-    return 0;
-}
-
-int order_order_above(int floor) {
-    for(int i = floor+1 ; i <= N_FLOORS; i++) {
-        if(order_same_floor_order(i)) { 
-            return 1; 
-        }
-    }
-    return 0;
-}
-
-int order_cab_order_above(int floor) {
-    for(int i = floor+1 ; i <= N_FLOORS; i++) {
-        if(order_cab_order_in_floor(i)) { 
-            return 1; 
-        }
-    }
-    return 0;
-}
-int order_cab_order_below(int floor) {
-    for(int i = 0; i < floor; i++) {
-        if(order_cab_order_in_floor(i)) { 
-            return 1; 
-        }
-    }
-    return 0;
-}
 
 int order_is_order_same_dir(int floor, elev_motor_direction_t dir) {
     if(orders[N_BUTTONS*floor +2]) {

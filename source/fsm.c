@@ -35,19 +35,6 @@ void fsm_emergency_handler() {
     
 }
 
-void fsm_check_buttons_place_order() {
-    for(int i = 0; i < 3; i++) {
-        for(int j = 0; j < 4; j++){
-            if(!((i == 0 && j == 3) || (i == 1 && j == 0))) {
-                if(elev_get_button_signal(i, j)) {
-                    order_place_order(i, j);
-                    elev_set_button_lamp(i,j,1);
-                }
-            }
-        }
-    }
-}
-
 void fsm_open_door() {
     timer_start();
     elev_set_door_open_lamp(1);

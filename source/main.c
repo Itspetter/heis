@@ -4,7 +4,7 @@
 #include "timer.h"
 #include <stdio.h>
 
-typedef enum state_id { //hvorfor forskjellig navn på enum og identifier
+typedef enum state_id { 
     idle = 0, //I ro uten bestillinger
     open_door, //I ro, åpne dør, sjekke bestilling
     moving, //Beveger seg mot prioritert bestilling
@@ -12,9 +12,6 @@ typedef enum state_id { //hvorfor forskjellig navn på enum og identifier
 } state;
 
 
-//OBS: HER GJØR VI ET VALG OM HVILKEN VEI VI PRIORITERER
-//NÅR TO KNAPPER INNE I HEISEN ER TRYKKET.
-//BURDE VEL EGENTLIG HA DEN NÆRMESTE ETASJEN? -> get_closest_cab_order
 int main() {
     // Initialize hardware
     if (!elev_init()) {
@@ -22,21 +19,17 @@ int main() {
         return 1;
     }     
 
-    //TO DO: LEGGE INN AT KNAPPER I HEISEN HAR HØYEST PRESEDENS
-
-
     //I idle etter init
     state current_state = idle;
-    elev_motor_direction_t direction;
+    elev_motor_direction_t direction = DIRN_STOP;
 
     while (1) {
-        //Sjekk på stoppknapp for hver iterasjon
+
         if(elev_get_stop_signal()) {
             current_state = emergency_stop;
         }
         
-        //Legg inn bestilling hvis en eller flere knapper trykkes
-        fsm_check_buttons_place_order();
+        order_update();
         
         //MINNE FOR Å HUSKE SIST ETASJE NÅR VI ER I BEVEGELSE
         int current_floor = elev_get_floor_sensor_signal();
@@ -49,30 +42,27 @@ int main() {
         
         switch(current_state) {
             case(idle): {
-                //
                 if(order_check_for_order()){
                     if(order_same_floor_order(current_floor)){
                         fsm_order_in_current_floor();
                         current_state = open_door;
                     }
-                    else{ 
-                        if(order_order_above(last_floor)) {
-                            elev_set_motor_direction(DIRN_UP);
-                            direction = DIRN_UP;
-                        }
-                        else if (order_order_below(last_floor)) {
-                            elev_set_motor_direction(DIRN_DOWN);
-                            direction = DIRN_DOWN;
-                        }
+                    else{
                         //HVIS NØDSTOPP TRYKKES MELLOM TO ETASJER
                         //MÅ SNU RETNING TILBAKE
-                        else if (order_same_floor_order(last_floor)) {
+                        if (order_same_floor_order(last_floor)) {
                             if(direction == DIRN_DOWN) {
                                 elev_set_motor_direction(DIRN_UP);
                             }
                             else {
                                 elev_set_motor_direction(DIRN_DOWN);
                             }
+                        }
+                        else {
+                            elev_motor_direction_t prev_direction = direction;
+                            direction = order_get_dir(current_floor, prev_direction);
+                            elev_set_motor_direction(direction);
+                            current_state = moving;
                         }
                         current_state = moving;
                     } 
@@ -121,8 +111,8 @@ int main() {
             }
             case(emergency_stop): {
                 fsm_emergency_handler();
+
                 //HVIS I ETASJE, GÅ TIL OPEN DOOR FOR Å LUKKE DØREN
-                
                 if(elev_get_floor_sensor_signal() != -1) {
                     fsm_order_in_current_floor();
                     current_state = open_door;
