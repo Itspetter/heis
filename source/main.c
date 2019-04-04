@@ -91,39 +91,18 @@ int main() {
                     fsm_timeout();
                     if(order_check_for_order()) {
                         if(order_same_floor_order(current_floor)){
-                        //Hvis bestilling i samme etg, åpne dør og slett bestilling
                             order_erase_order(current_floor);
                             fsm_open_door();
                             current_state = open_door;
-                            printf("Open Door");
                         }
-                        //Ellers: bestilling i annen etasje
-                        //OBS: HER GJØR VI ET VALG OM HVILKEN VEI VI PRIORITERER
-                        //NÅR TO KNAPPER INNE I HEISEN ER TRYKKET.
                         else {
-                            printf("Moving");
-                            if(order_cab_order_above(last_floor)) {
-                                elev_set_motor_direction(DIRN_UP);
-                                direction = DIRN_UP;
-                            }
-                            else if(order_cab_order_below(last_floor)){
-                                elev_set_motor_direction(DIRN_DOWN);
-                                direction = DIRN_DOWN;
-                            }
-                            else if(order_order_above(last_floor)) {
-                                elev_set_motor_direction(DIRN_UP);
-                                direction = DIRN_UP;
-                            }
-                            else if (order_order_below(last_floor)) {
-                                elev_set_motor_direction(DIRN_DOWN);
-                                direction = DIRN_DOWN;
-                            }
+                            elev_motor_direction_t prev_direction = direction;
+                            direction = order_get_dir(current_floor, prev_direction);
+                            elev_set_motor_direction(direction);
                             current_state = moving; 
                         }
                     }   
                     else {
-                        printf("Idle");
-                        
                         current_state = idle;
                     }
                 }

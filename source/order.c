@@ -9,6 +9,7 @@
 
 
 int orders[12];
+int last_checked = 0;
 
 #include "order.h"
 int order_check_for_order(){
@@ -108,4 +109,38 @@ int order_is_order_same_dir(int floor, elev_motor_direction_t dir) {
         return 1;
     }
     return 0;
+}
+
+elev_motor_direction_t order_get_dir(int floor, elev_motor_direction_t last_direction) {
+    //if(last_checked == 11) {
+    //    last_checked = 0;
+    //}
+
+
+    if(last_direction == DIRN_UP){
+            for(int i = 12; i > 0; i--) {
+                if(orders[i]) {
+
+                //last_checked = i; 
+            
+                if(i > floor*3) {
+                    return DIRN_UP; 
+                }
+            return DIRN_DOWN; 
+            } 
+         }
+    }
+
+    for(int i = 0; i < 12; i++) {
+        if(orders[i]) {
+
+            //last_checked = i; 
+            
+            if(i > floor*3) {
+                return DIRN_UP; 
+            }
+            return DIRN_DOWN; 
+        } 
+    }
+    return DIRN_STOP;
 }
