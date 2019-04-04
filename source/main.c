@@ -66,6 +66,8 @@ int main() {
                             elev_set_motor_direction(DIRN_DOWN);
                             direction = DIRN_DOWN;
                         }
+                        //HVIS NØDSTOPP TRYKKES MELLOM TO ETASJER
+                        //MÅ SNU RETNING TILBAKE
                         else if (order_same_floor_order(last_floor)) {
                             if(direction == DIRN_DOWN) {
                                 elev_set_motor_direction(DIRN_UP);

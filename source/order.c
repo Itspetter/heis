@@ -6,12 +6,19 @@
 //  Copyright © 2019 Hanna Hjelmeland. All rights reserved.
 //
 
+#include "order.h"
+#include <time.h>
 
+int THRESHOLD = 6; 
 
 int orders[12];
+<<<<<<< HEAD
 int last_checked = 0;
+=======
+time_t time_stamp[12] = {0};
 
-#include "order.h"
+>>>>>>> master
+
 int order_check_for_order(){
     for(int i = 0; i < 12; i++)
     {
@@ -23,6 +30,7 @@ int order_check_for_order(){
 void order_place_order(elev_button_type_t button, int floor){
     int button_value = button;
     orders[N_BUTTONS*floor + button_value] = 1;
+    time_stamp[N_BUTTONS*floor + button_value] = time(NULL);
 }
 
 void order_erase_order(int floor){
@@ -36,6 +44,7 @@ void order_erase_order(int floor){
         if(floor == 3 && i == 0) { 
             continue;  
         }
+        time_stamp[N_BUTTONS*floor + i] = 0;
         orders[N_BUTTONS*floor + i] = 0;
         elev_set_button_lamp(i,floor,0);
     }
