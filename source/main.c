@@ -31,6 +31,7 @@ int main() {
         
         int current_floor = elev_get_floor_sensor_signal();
         int last_floor; 
+
         if(current_floor != -1) {
             last_floor = current_floor;
             elev_set_floor_indicator(current_floor);
@@ -48,12 +49,9 @@ int main() {
                         //HVIS NØDSTOPP TRYKKES MELLOM TO ETASJER
                         //MÅ SNU RETNING TILBAKE
                         if (order_same_floor_order(last_floor)) {
-                            //FUNKER FINT
                             fsm_order_in_last_floor();
                         }
                         else {
-                            //OBS: SKJØNNER IKKE HVORFOR VI IKKE KAN 
-                            //HA FSM START MOVING HER. 
                             if(order_order_above(last_floor)) {
                                 elev_set_motor_direction(DIRN_UP);
                                 direction = DIRN_UP;
@@ -62,18 +60,16 @@ int main() {
                                 elev_set_motor_direction(DIRN_DOWN);
                                 direction = DIRN_DOWN;
                             }
-                            //fsm_start_moving();
                         }
                         current_state = moving;
                     } 
                 }
-                //FORSIKRING 
                 else {
                     current_state = idle;
                 }
                 break;
             }
-            case(open_door) : {
+            case(open_door): {
                 if(order_same_floor_order(current_floor)){
                     fsm_order_in_current_floor();
                     current_state = open_door;
@@ -94,11 +90,12 @@ int main() {
                         current_state = idle;
                     }
                 }
-                //FORSIKRING
-                else { current_state = open_door; }
+                else { 
+					current_state = open_door; 
+				}
                 break;
             }
-            case(moving) : {
+            case(moving): {
                 if(order_same_floor_order(current_floor) && order_is_order_same_dir(current_floor, direction)) {
                     elev_set_motor_direction(DIRN_STOP);
                     fsm_order_in_current_floor();
@@ -117,7 +114,7 @@ int main() {
                 }
                 break;
             }
-            default : {
+            default: {
                 return 0;
             }
         }

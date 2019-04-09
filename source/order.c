@@ -29,11 +29,12 @@ int order_order_above(int floor) {
     return 0; 
 }
 
-
 int order_check_for_order(){
     for(int i = 0; i < 12; i++)
     {
-        if(orders[i]) {return 1;}
+        if(orders[i]) {
+			return 1;
+		}
     }
     return 0; 
 }
@@ -41,7 +42,6 @@ int order_check_for_order(){
 void order_place_order(elev_button_type_t button, int floor){
     int button_value = button;
     orders[N_BUTTONS*floor + button_value] = 1;
-  
 }
 
 void order_update() {
@@ -58,8 +58,10 @@ void order_update() {
 }
 
 void order_erase_order(int floor){
-    //HVIS IKKE I ETASJE - IKKE HANDLE
-    if(floor == -1) { return; }
+    if(floor == -1) { 
+		return; 
+	}
+
     for(int i = 0; i < N_BUTTONS; i++)
     {
         if(floor == 0 && i == 1) { 
@@ -68,19 +70,23 @@ void order_erase_order(int floor){
         if(floor == 3 && i == 0) { 
             continue;  
         }
-        
         orders[N_BUTTONS*floor + i] = 0;
         elev_set_button_lamp(i,floor,0);
     }
 }
 
 int order_same_floor_order(int floor){
-    if(floor == -1) { return 0; }
-    return (orders[N_BUTTONS*floor] || orders[N_BUTTONS*floor + 1] || orders[N_BUTTONS*floor + 2]);
+    if(floor == -1) { 
+		return 0; 
+	}
+	int same_floor_order = (orders[N_BUTTONS*floor] || orders[N_BUTTONS*floor + 1] || orders[N_BUTTONS*floor + 2]);
+	return same_floor_order;
 }
 
 int order_cab_order_in_floor(int floor) {
-    if(floor == -1) { return 0; }
+    if(floor == -1) { 
+		return 0; 
+	}
     return (orders[N_BUTTONS*floor + 2]);
 }
 
@@ -93,19 +99,19 @@ int order_is_order_same_dir(int floor, elev_motor_direction_t dir) {
     if((floor == 0) || (floor == 3)) {
         return 1; 
     }
-    int num_orders = 0; 
-    for(int i = 0; i < 12; i++) {
-        num_orders += orders[i];
-    }
-    if(num_orders == 1) {
-        return 1;
-    }
     if((orders[N_BUTTONS*floor] && dir == DIRN_UP)) {
         return 1; 
     }
     if(orders[N_BUTTONS*floor + 1] && dir == DIRN_DOWN) {
         return 1;
     }
+	int num_orders = 0;
+	for (int i = 0; i < 12; i++) {
+		num_orders += orders[i];
+	}
+	if (num_orders == 1) {
+		return 1;
+	}
     return 0;
 }
 

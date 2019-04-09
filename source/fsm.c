@@ -15,11 +15,9 @@
 
 
 void fsm_emergency_handler() {
-    //STOPPLAMPE OG MOTOR
     elev_set_stop_lamp(1);
     elev_set_motor_direction(DIRN_STOP);
     
-    //SLETTE ALLE BESTILLINGER
     for(int i = 0; i < N_FLOORS; i++) {
         order_erase_order(i);
     }
@@ -29,10 +27,8 @@ void fsm_emergency_handler() {
         fsm_open_door();
     }
     
-    //LOOPER TIL KNAPP IKKE LENGER ER TRYKKET
     while(elev_get_stop_signal());
     elev_set_stop_lamp(0);
-    
 }
 
 void fsm_open_door() {
