@@ -13,6 +13,7 @@
 #include <stdlib.h>
 #include <time.h>
 
+
 static const int lamp_channel_matrix[N_FLOORS][N_BUTTONS] = {
     {LIGHT_UP1, LIGHT_DOWN1, LIGHT_COMMAND1},
     {LIGHT_UP2, LIGHT_DOWN2, LIGHT_COMMAND2},
@@ -30,6 +31,7 @@ static const int button_channel_matrix[N_FLOORS][N_BUTTONS] = {
 
 int elev_init(void) {
     int i;
+
 
     // Init hardware
     if (!io_init()){
