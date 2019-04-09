@@ -4,12 +4,7 @@
 #include "timer.h"
 #include <stdio.h>
 
-typedef enum state_id { 
-    idle = 0, //I ro uten bestillinger
-    open_door, //I ro, åpne dør, sjekke bestilling
-    moving, //Beveger seg mot prioritert bestilling
-    emergency_stop
-} state;
+
 
 
 int main() {
@@ -120,8 +115,6 @@ int main() {
         }
 
     }
-
-    elev_set_motor_direction(DIRN_STOP);
 
     return 0;
 }

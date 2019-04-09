@@ -9,7 +9,7 @@
 #include "order.h"
 #include <time.h>
 
-int orders[12] = {0};
+int orders[12];
 
 int order_order_below(int floor) {
     for(int i = 0; i < floor; i++) {
