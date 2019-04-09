@@ -90,8 +90,6 @@ int order_cab_order_in_floor(int floor) {
     return (orders[N_BUTTONS*floor + 2]);
 }
 
-
-
 int order_is_order_same_dir(int floor, elev_motor_direction_t dir) {
     if(orders[N_BUTTONS*floor +2]) {
         return 1; 
@@ -136,4 +134,3 @@ elev_motor_direction_t order_get_dir(int floor, elev_motor_direction_t last_dire
     }
     return DIRN_STOP;
 }
-

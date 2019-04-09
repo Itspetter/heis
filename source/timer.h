@@ -1,6 +1,6 @@
 
-void timer_start(); 
+void timer_start(void); 
 
-int timer_timeout();
+int timer_timeout(void);
 
-void timer_stop();
+void timer_stop(void);
