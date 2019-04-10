@@ -2,7 +2,7 @@
 #include "order.h"
 #include <time.h>
 
-int orders[12];
+int orders[12] = {0};
 
 int order_check_for_order(){
     for(int i = 0; i < 12; i++)
@@ -86,7 +86,7 @@ int order_only_one_order() {
 
 elev_motor_direction_t order_get_direction(int floor, elev_motor_direction_t last_direction) {
     if(last_direction == DIRN_UP){
-        for(int i = 12; i > 0; i--) {
+        for(int i = 11; i >= 0; i--) {
             if(orders[i]) {          
                 if(i > floor*3) {
                    return DIRN_UP; 
