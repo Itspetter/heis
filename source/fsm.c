@@ -12,6 +12,8 @@
 #include "timer.h"
 #include "elev.h"
 
+int current_floor;
+int last_floor; 
 
 
 void fsm_emergency_handler() {
@@ -23,7 +25,7 @@ void fsm_emergency_handler() {
     }
     
     //Hvis i etasje og døren er lukket, åpne døren
-    if((elev_get_floor_sensor_signal() != (-1)) && timer_timeout()) {
+    if((current_floor != -1) && timer_timeout()) {
         fsm_open_door();
     }
     
@@ -43,13 +45,13 @@ void fsm_timeout() {
 }
 
 void fsm_order_in_current_floor() {
-    order_erase_order(elev_get_floor_sensor_signal());
+    order_erase_order(current_floor);
     fsm_open_door();
 }
 
 void fsm_start_moving() {
     elev_motor_direction_t prev_direction = direction;
-    direction = order_get_dir(elev_get_floor_sensor_signal(), prev_direction);
+    direction = order_get_dir(current_floor, prev_direction);
     elev_set_motor_direction(direction);
 }
 
@@ -67,16 +69,19 @@ void fsm_fsm(){
 
     state current_state = idle;
 
+    current_floor = elev_get_floor_sensor_signal();
+    last_floor = current_floor;
+
     while (1) {
 
         if(elev_get_stop_signal()) {
+            fsm_emergency_handler();
             current_state = emergency_stop;
         }
 
         order_update();
         
-        int current_floor = elev_get_floor_sensor_signal();
-        int last_floor; 
+        current_floor = elev_get_floor_sensor_signal();
 
         if(current_floor != -1) {
             last_floor = current_floor;
@@ -102,7 +107,7 @@ void fsm_fsm(){
                                 elev_set_motor_direction(DIRN_UP);
                                 direction = DIRN_UP;
                             }
-                            else if(order_order_below(last_floor)) {
+                            else {
                                 elev_set_motor_direction(DIRN_DOWN);
                                 direction = DIRN_DOWN;
                             }
@@ -150,8 +155,7 @@ void fsm_fsm(){
                 break;
             }
             case(emergency_stop): {
-                fsm_emergency_handler();
-                if(elev_get_floor_sensor_signal() != -1) {
+                if(current_floor != -1) {
                     fsm_order_in_current_floor();
                     current_state = open_door;
                 }

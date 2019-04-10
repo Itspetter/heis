@@ -14,13 +14,13 @@ void timer_start() {
     start_time.timestamp = time(NULL);
 }
 
-int timer_timeout(struct timeStruct t) {
+int timer_timeout(void) {
     if(time(NULL) - start_time.timestamp < 3) {
         return 0; 
     }
     return 1; 
 }  
 
-void timer_stop(struct timeStruct t){
+void timer_stop(void){
     start_time.timestamp = 0;
 }
