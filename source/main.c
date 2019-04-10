@@ -14,7 +14,7 @@ int main() {
         return 1;
     }     
 
-    fsm_fsm();
+    fsm_run();
 
     return 0;
 }

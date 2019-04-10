@@ -39,30 +39,32 @@ void fsm_close_door() {
     timer_stop(); 
 }
 
-void fsm_order_in_current_floor() {
+void fsm_delete_order_open_door() {
     order_erase_order(current_floor);
     fsm_open_door();
 }
 
 void fsm_start_moving() {
+    
+    if (order_same_floor_order(last_floor)) {
+        if(direction == DIRN_DOWN) {
+            elev_set_motor_direction(DIRN_UP);
+        }
+        else {
+            elev_set_motor_direction(DIRN_DOWN);
+        }
+        return;
+    }
+
     elev_motor_direction_t prev_direction = direction;
     direction = order_get_direction(last_floor, prev_direction);
     elev_set_motor_direction(direction);
 }
 
-void fsm_order_in_last_floor() {
-    if(direction == DIRN_DOWN) {
-        elev_set_motor_direction(DIRN_UP);
-    }
-    else {
-        elev_set_motor_direction(DIRN_DOWN);
-    }
-}
 
+void fsm_run(){
 
-void fsm_fsm(){
-
-    state current_state = idle;
+    state_id state = idle;
 
     current_floor = elev_get_floor_sensor_signal();
     last_floor = current_floor;
@@ -71,7 +73,7 @@ void fsm_fsm(){
 
         if(elev_get_stop_signal()) {
             fsm_emergency_handler();
-            current_state = emergency_stop;
+            state = emergency_stop;
         }
 
         order_update();
@@ -84,45 +86,41 @@ void fsm_fsm(){
         }
         
         
-        switch(current_state) {
+        switch(state) {
             case idle: {
                 if(order_check_for_order()){
                     if(order_same_floor_order(current_floor)){
-                        fsm_order_in_current_floor();
-                        current_state = open_door;
+                        fsm_delete_order_open_door();
+                        state = open_door;
                     }
                     else{
                         //If emergency stop between floors and order in last_floor
-                        if (order_same_floor_order(last_floor)) {
-                            fsm_order_in_last_floor();
-                        }
-                        else {
-                            fsm_start_moving();
-                        }
-                        current_state = moving;
-                    } 
-                }
+                        fsm_start_moving();
+                    }
+                        state = moving;
+                } 
                 break;
             }
+                
             
             case open_door: {
                 if(order_same_floor_order(current_floor)){
-                    fsm_order_in_current_floor();
-                    current_state = open_door;
+                    fsm_delete_order_open_door();
+                    state = open_door;
                 }
                 if(timer_timeout()) {
                     fsm_close_door();
                     if(order_check_for_order()) {
                         if(order_same_floor_order(current_floor)){
-                            fsm_order_in_current_floor();
+                            fsm_delete_order_open_door();
                         }
                         else {
                             fsm_start_moving();
-                            current_state = moving; 
+                            state = moving; 
                         }
                     }   
                     else {
-                        current_state = idle;
+                        state = idle;
                     }
                 }
                 break;
@@ -131,19 +129,19 @@ void fsm_fsm(){
             case moving: {
                 if(order_same_floor_order(current_floor) && (order_is_order_same_direction(current_floor, direction) || order_only_one_order())) {
                     elev_set_motor_direction(DIRN_STOP);
-                    fsm_order_in_current_floor();
-                    current_state = open_door; 
+                    fsm_delete_order_open_door();
+                    state = open_door; 
                 }
                 break;
             }
 
             case emergency_stop: {
                 if(current_floor != -1) {
-                    fsm_order_in_current_floor();
-                    current_state = open_door;
+                    fsm_delete_order_open_door();
+                    state = open_door;
                 }
                 else {
-                    current_state = idle; 
+                    state = idle; 
                 }
                 break;
             }
