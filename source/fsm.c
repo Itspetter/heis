@@ -1,10 +1,3 @@
-//
-//  fsm.c
-//  Heis
-//
-//  Created by Hanna Hjelmeland on 28/03/2019.
-//  Copyright © 2019 Hanna Hjelmeland. All rights reserved.
-//
 
 #include <stdio.h>
 #include "fsm.h"
@@ -14,6 +7,8 @@
 
 int current_floor;
 int last_floor; 
+elev_motor_direction_t direction;
+
 
 
 void fsm_emergency_handler() {
@@ -24,7 +19,7 @@ void fsm_emergency_handler() {
         order_erase_order(i);
     }
     
-    //Hvis i etasje og døren er lukket, åpne døren
+    //If in floor and door is closed -> open door
     if((current_floor != -1) && timer_timeout()) {
         fsm_open_door();
     }
@@ -39,7 +34,7 @@ void fsm_open_door() {
 }
 
 
-void fsm_timeout() {
+void fsm_close_door() {
     elev_set_door_open_lamp(0);
     timer_stop(); 
 }
@@ -51,7 +46,7 @@ void fsm_order_in_current_floor() {
 
 void fsm_start_moving() {
     elev_motor_direction_t prev_direction = direction;
-    direction = order_get_dir(current_floor, prev_direction);
+    direction = order_get_direction(last_floor, prev_direction);
     elev_set_motor_direction(direction);
 }
 
@@ -90,47 +85,36 @@ void fsm_fsm(){
         
         
         switch(current_state) {
-            case(idle): {
+            case idle: {
                 if(order_check_for_order()){
                     if(order_same_floor_order(current_floor)){
                         fsm_order_in_current_floor();
                         current_state = open_door;
                     }
                     else{
-                        //HVIS NØDSTOPP TRYKKES MELLOM TO ETASJER
-                        //MÅ SNU RETNING TILBAKE
+                        //If emergency stop between floors and order in last_floor
                         if (order_same_floor_order(last_floor)) {
                             fsm_order_in_last_floor();
                         }
                         else {
-                            if(order_order_above(last_floor)) {
-                                elev_set_motor_direction(DIRN_UP);
-                                direction = DIRN_UP;
-                            }
-                            else {
-                                elev_set_motor_direction(DIRN_DOWN);
-                                direction = DIRN_DOWN;
-                            }
+                            fsm_start_moving();
                         }
                         current_state = moving;
                     } 
                 }
-                else {
-                    current_state = idle;
-                }
                 break;
             }
-            case(open_door): {
+            
+            case open_door: {
                 if(order_same_floor_order(current_floor)){
                     fsm_order_in_current_floor();
                     current_state = open_door;
                 }
                 if(timer_timeout()) {
-                    fsm_timeout();
+                    fsm_close_door();
                     if(order_check_for_order()) {
                         if(order_same_floor_order(current_floor)){
                             fsm_order_in_current_floor();
-                            current_state = open_door;
                         }
                         else {
                             fsm_start_moving();
@@ -141,20 +125,19 @@ void fsm_fsm(){
                         current_state = idle;
                     }
                 }
-                else { 
-					current_state = open_door; 
-				}
                 break;
             }
-            case(moving): {
-                if(order_same_floor_order(current_floor) && order_is_order_same_dir(current_floor, direction)) {
+
+            case moving: {
+                if(order_same_floor_order(current_floor) && (order_is_order_same_direction(current_floor, direction) || order_only_one_order())) {
                     elev_set_motor_direction(DIRN_STOP);
                     fsm_order_in_current_floor();
                     current_state = open_door; 
                 }
                 break;
             }
-            case(emergency_stop): {
+
+            case emergency_stop: {
                 if(current_floor != -1) {
                     fsm_order_in_current_floor();
                     current_state = open_door;
@@ -165,6 +148,8 @@ void fsm_fsm(){
                 break;
             }
             default: {
+                //If undefined state
+                elev_set_motor_direction(DIRN_STOP);
                 return;
             }
         }

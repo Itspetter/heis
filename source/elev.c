@@ -30,17 +30,13 @@ static const int button_channel_matrix[N_FLOORS][N_BUTTONS] = {
 };
 
 int elev_init(void) {
-    int i;
 
-
-    // Init hardware
     if (!io_init()){
         printf("failed io initialize io\n");
         return 0;
         }
     
-    // Zero all floor button lamps
-    for (i = 0; i < N_FLOORS; ++i) {
+    for (int i = 0; i < N_FLOORS; ++i) {
         if (i != 0)
             elev_set_button_lamp(BUTTON_CALL_DOWN, i, 0);
 
@@ -50,7 +46,7 @@ int elev_init(void) {
         elev_set_button_lamp(BUTTON_COMMAND, i, 0);
     }
 
-    // Clear stop lamp, door open lamp, and set floor indicator to ground floor.
+   
     elev_set_stop_lamp(0);
     elev_set_door_open_lamp(0);
     
@@ -69,9 +65,7 @@ int elev_init(void) {
 	}
 
 	elev_set_floor_indicator(floor);
-	
 
-    // Return success.
     return 1;
 }
 

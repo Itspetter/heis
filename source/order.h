@@ -27,14 +27,11 @@ void order_erase_order(int floor);
 //Sjekker om det er bestillinger i samme etasje
 int order_same_floor_order(int floor);
 
-int order_order_below(int floor);
+int order_is_order_same_direction(int floor, elev_motor_direction_t dir);
 
-int order_order_above(int floor);
+int order_only_one_order(); 
 
-int order_is_order_same_dir(int floor, elev_motor_direction_t dir);
-
-
-elev_motor_direction_t order_get_dir(int floor, elev_motor_direction_t direction);
+elev_motor_direction_t order_get_direction(int floor, elev_motor_direction_t direction);
 
 
 
