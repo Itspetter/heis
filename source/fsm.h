@@ -8,7 +8,6 @@
 #define fsm_h
 
 #include "elev.h"
-#include <time.h>
 
 /**
  *  @brief Possible states for the fsm.

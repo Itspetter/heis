@@ -1,6 +1,5 @@
 
 #include "order.h"
-#include <time.h>
 
 int orders[12] = {0};
 
