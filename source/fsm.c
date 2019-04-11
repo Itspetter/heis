@@ -7,9 +7,20 @@
 
 int current_floor;
 int last_floor; 
-elev_motor_direction_t direction;
+state_id state = idle;
+elev_motor_direction_t direction = DIRN_UP;
 
 
+void fsm_handle_order(void) {
+    if(order_same_floor_order(current_floor)){
+        fsm_delete_order_open_door();
+        state = open_door;
+    }
+    else{
+        fsm_start_moving();
+        state = moving;
+    }
+}
 
 void fsm_emergency_handler() {
     elev_set_stop_lamp(1);
@@ -64,8 +75,6 @@ void fsm_start_moving() {
 
 void fsm_run(){
 
-    state_id state = idle;
-
     current_floor = elev_get_floor_sensor_signal();
     last_floor = current_floor;
 
@@ -89,15 +98,7 @@ void fsm_run(){
         switch(state) {
             case idle: {
                 if(order_check_for_order()){
-                    if(order_same_floor_order(current_floor)){
-                        fsm_delete_order_open_door();
-                        state = open_door;
-                    }
-                    else{
-                        //If emergency stop between floors and order in last_floor
-                        fsm_start_moving();
-                    }
-                        state = moving;
+                    fsm_handle_order(); 
                 } 
                 break;
             }
@@ -111,13 +112,7 @@ void fsm_run(){
                 if(timer_timeout()) {
                     fsm_close_door();
                     if(order_check_for_order()) {
-                        if(order_same_floor_order(current_floor)){
-                            fsm_delete_order_open_door();
-                        }
-                        else {
-                            fsm_start_moving();
-                            state = moving; 
-                        }
+                        fsm_handle_order();
                     }   
                     else {
                         state = idle;

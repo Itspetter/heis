@@ -20,6 +20,12 @@ typedef enum state {
     emergency_stop
 } state_id;
 
+/**
+ * @brief Decide if next state is open door or moving based on 
+ * which floor the order is in. 
+ */
+void fsm_handle_order(void);
+
 
 
 /**
